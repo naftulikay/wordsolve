@@ -1,0 +1,7 @@
+[package]
+name = "wordsolve"
+version = "0.1.0"
+authors = ["Naftuli Kay <me@naftuli.wtf>"]
+edition = "2018"
+
+[dependencies]

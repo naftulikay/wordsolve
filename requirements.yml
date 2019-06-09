@@ -1,0 +1,5 @@
+---
+- name: vagrant-node-dev
+  src: naftulikay.vagrant-node-dev
+- name: vagrant-rust-dev
+  src: naftulikay.vagrant-rust-dev

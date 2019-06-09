@@ -1,0 +1,8 @@
+---
+- name: build
+  hosts: all
+  become: true
+  roles:
+    - role: vagrant-rust-dev
+    - role: vagrant-node-dev
+      node_version: 12.4.0
