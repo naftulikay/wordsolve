@@ -5,3 +5,5 @@ authors = ["Naftuli Kay <me@naftuli.wtf>"]
 edition = "2018"
 
 [dependencies]
+flate2 = "1.0"
+structopt="0.2"
