@@ -1,24 +1,24 @@
 #[cfg(test)]
 mod tests;
 
-use flate2::read::GzDecoder;
-
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
+use zstd::Decoder;
+use hashbrown::{HashMap, HashSet};
 
 use std::io::prelude::*;
 use std::io::BufReader;
+use smol_str::SmolStr;
+use rayon::prelude::*;
 
-static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.gz");
+static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.zst");
 
 /// A count of characters for a given string.
-type CharCount = BTreeMap<char, usize>;
+type CharCount = HashMap<char, usize>;
 
 /// A dictionary of words of a given size.
 pub struct Dictionary(WordSet);
 
 /// A set of unique dictionary words.
-pub type WordSet = BTreeSet<String>;
+pub type WordSet = HashSet<SmolStr>;
 
 impl Dictionary {
     /// Construct a new dictionary containing words whose length falls in range.
@@ -29,11 +29,11 @@ impl Dictionary {
     /// eliminate duplicative CPU work.
     pub fn new(min_size: u8, max_size: u8) -> Self {
         Dictionary(
-            BufReader::new(GzDecoder::new(&COMPRESSED_DICT_BYTES[..]))
+            BufReader::new(Decoder::new(&COMPRESSED_DICT_BYTES[..]).unwrap())
                 .lines()
                 .into_iter()
                 .filter_map(|r| r.ok())
-                .map(|s| s.trim().to_string())
+                .map(|s| SmolStr::from(s.trim()))
                 .filter(|word| is_valid_word_size(min_size, max_size, word.as_str()))
                 .collect(),
         )
@@ -46,7 +46,7 @@ impl Dictionary {
         let budget = allowed_chars.char_count();
 
         self.0
-            .iter()
+            .par_iter()
             .filter(|word| is_valid_word_chars(&budget, word.as_str()))
             .map(|word| word.clone())
             .collect()
