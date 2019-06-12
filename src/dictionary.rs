@@ -7,6 +7,7 @@ use hashbrown::{HashMap, HashSet};
 use std::io::prelude::*;
 use std::io::BufReader;
 use smol_str::SmolStr;
+use rayon::prelude::*;
 
 static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.zst");
 
@@ -45,7 +46,7 @@ impl Dictionary {
         let budget = allowed_chars.char_count();
 
         self.0
-            .iter()
+            .par_iter()
             .filter(|word| is_valid_word_chars(&budget, word.as_str()))
             .map(|word| word.clone())
             .collect()
