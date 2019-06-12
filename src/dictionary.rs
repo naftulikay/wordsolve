@@ -8,6 +8,7 @@ use std::collections::BTreeSet;
 
 use std::io::prelude::*;
 use std::io::BufReader;
+use smol_str::SmolStr;
 
 static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.gz");
 
@@ -18,7 +19,7 @@ type CharCount = BTreeMap<char, usize>;
 pub struct Dictionary(WordSet);
 
 /// A set of unique dictionary words.
-pub type WordSet = BTreeSet<String>;
+pub type WordSet = BTreeSet<SmolStr>;
 
 impl Dictionary {
     /// Construct a new dictionary containing words whose length falls in range.
@@ -33,7 +34,7 @@ impl Dictionary {
                 .lines()
                 .into_iter()
                 .filter_map(|r| r.ok())
-                .map(|s| s.trim().to_string())
+                .map(|s| SmolStr::from(s.trim()))
                 .filter(|word| is_valid_word_size(min_size, max_size, word.as_str()))
                 .collect(),
         )

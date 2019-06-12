@@ -1,11 +1,10 @@
-extern crate structopt;
-
 mod cli;
 mod dictionary;
 
 use dictionary::Dictionary;
 
 use structopt::StructOpt;
+use smol_str::SmolStr;
 
 fn main() {
     let args = cli::Args::from_args();
@@ -14,7 +13,7 @@ fn main() {
     let dictionary = Dictionary::new(args.min_size, args.max_size);
 
     // filter the dictionary to only contain solutions given the following available characters
-    let mut solutions: Vec<String> = dictionary
+    let mut solutions: Vec<SmolStr> = dictionary
         .solutions(&args.available_chars)
         .into_iter()
         .collect();
