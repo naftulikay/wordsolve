@@ -2,9 +2,7 @@
 mod tests;
 
 use flate2::read::GzDecoder;
-
-use std::collections::BTreeMap;
-use std::collections::BTreeSet;
+use hashbrown::{HashMap, HashSet};
 
 use std::io::prelude::*;
 use std::io::BufReader;
@@ -13,13 +11,13 @@ use smol_str::SmolStr;
 static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.gz");
 
 /// A count of characters for a given string.
-type CharCount = BTreeMap<char, usize>;
+type CharCount = HashMap<char, usize>;
 
 /// A dictionary of words of a given size.
 pub struct Dictionary(WordSet);
 
 /// A set of unique dictionary words.
-pub type WordSet = BTreeSet<SmolStr>;
+pub type WordSet = HashSet<SmolStr>;
 
 impl Dictionary {
     /// Construct a new dictionary containing words whose length falls in range.
