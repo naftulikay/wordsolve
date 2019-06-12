@@ -1,14 +1,14 @@
 #[cfg(test)]
 mod tests;
 
-use flate2::read::GzDecoder;
+use zstd::Decoder;
 use hashbrown::{HashMap, HashSet};
 
 use std::io::prelude::*;
 use std::io::BufReader;
 use smol_str::SmolStr;
 
-static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.gz");
+static COMPRESSED_DICT_BYTES: &'static [u8] = include_bytes!("../lib/dictionary.txt.zst");
 
 /// A count of characters for a given string.
 type CharCount = HashMap<char, usize>;
@@ -28,7 +28,7 @@ impl Dictionary {
     /// eliminate duplicative CPU work.
     pub fn new(min_size: u8, max_size: u8) -> Self {
         Dictionary(
-            BufReader::new(GzDecoder::new(&COMPRESSED_DICT_BYTES[..]))
+            BufReader::new(Decoder::new(&COMPRESSED_DICT_BYTES[..]).unwrap())
                 .lines()
                 .into_iter()
                 .filter_map(|r| r.ok())

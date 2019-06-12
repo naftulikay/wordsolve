@@ -5,7 +5,7 @@ authors = ["Naftuli Kay <me@naftuli.wtf>"]
 edition = "2018"
 
 [dependencies]
-flate2 = "1.0"
 structopt = "0.2"
 smol_str = "0.1.11"
 hashbrown = "0.4.0"
+zstd = "0.4.24"
